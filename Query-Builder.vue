@@ -3,24 +3,14 @@
         Find <strong>Github</strong> user:
         <vue-simple-suggest
                 v-model="chosen"
-                :list="suggestArray"
+                :list="getSuggestions"
                 value-attribute="id"
                 display-attribute="login"
                 :max-suggestions="10"
-                :debounce="1"
                 :min-length="0"
                 :filter-by-query="true">
-            <input v-model="text">
             <!-- Filter by input text to only show the matching results -->
         </vue-simple-suggest>
-
-        <br>
-
-        <ul v-for="suggest in suggestArray">
-            <li>
-                {{suggest.login}}
-            </li>
-        </ul>
     </div>
 
 </template>
@@ -36,27 +26,19 @@
         },
         data() {
             return {
-                chosen: '',
-                text:'',
-                suggestArray:[]
+                chosen: ''
             }
         },
-        watch:{
-            text(query) {
-                fetch(`https://api.github.com/search/users?q=${query}`)
+        methods: {
+            getSuggestions(query) {
+                return fetch(`https://api.github.com/search/users?q=${query}`)
                     .then(response => response.json())
                     .then(data => {
                         console.log(data.items);
-                        this.suggestArray = data.items;
-
+                        return data.items;
                     })
                     .catch(error => console.error(error))
-
             }
-
-        },
-        methods: {
-
         }
     }
 </script>
